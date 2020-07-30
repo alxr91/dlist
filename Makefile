@@ -1,10 +1,12 @@
 preseq:
 	go get "github.com/c9s/goprocinfo/linux"
+	go get "github.com/docker/docker/api/types"
+	go get "github.com/docker/docker/client"
 
 build:
-	go build -o /usr/local/bin/superawesome main.go
+	go build -o /usr/local/bin/dlist main.go
 
 run:
-	superawesome
+	dlist
 
 install: preseq build run
