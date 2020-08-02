@@ -60,9 +60,10 @@ func getContainers() error {
 	}
 
 	if len(containers) > 0 {
+
+		fmt.Println("Running containers")
 		for _, container := range containers {
 
-			fmt.Println("Running containers")
 			fmt.Println("Container name: ", container.Names)
 
 		}
