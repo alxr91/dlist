@@ -4,9 +4,11 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"strconv"
 	"syscall"
 
 	"github.com/docker/docker/api/types"
+	"github.com/docker/docker/api/types/filters"
 	"github.com/docker/docker/client"
 
 	linuxproc "github.com/c9s/goprocinfo/linux"
@@ -15,6 +17,9 @@ import (
 func main() {
 
 	getMem()
+	getCpu()
+
+	getContainers()
 }
 
 func getMem() {
@@ -26,10 +31,10 @@ func getMem() {
 		log.Fatal("Error: ", err)
 	}
 
-	fmt.Println("Total Mem: ", info.Totalram/1024)
-	fmt.Println("Free Mem: ", info.Freeram/1024)
+	memTotal := strconv.Itoa(int(info.Totalram / 1024))
+	memFree := strconv.Itoa(int(info.Freeram / 1024))
 
-	getCpu()
+	fmt.Println("Total Mem: " + memTotal + " Available Mem: " + memFree)
 
 }
 
@@ -44,7 +49,6 @@ func getCpu() {
 
 	fmt.Println(stat.CPUStatAll)
 
-	getContainers()
 }
 
 func getContainers() error {
@@ -69,7 +73,30 @@ func getContainers() error {
 		}
 	} else {
 
-		fmt.Println("No containers to list..")
+		fmt.Println("No running containers")
 	}
+
+	args := filters.NewArgs(filters.KeyValuePair{"status", "exited"})
+	stoppedContainer, err := cli.ContainerList(context.Background(), types.ContainerListOptions{Filters: args})
+
+	if err != nil {
+		panic(err)
+	}
+
+	if len(stoppedContainer) > 0 {
+
+		fmt.Println("")
+		fmt.Println("Stopped containers")
+
+		for _, exited := range stoppedContainer {
+
+			fmt.Println("Stopped container: ", exited.Names)
+		}
+
+	} else {
+
+		fmt.Println("You don't have any stopped containers.")
+	}
+
 	return nil
 }
