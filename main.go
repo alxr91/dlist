@@ -90,11 +90,12 @@ func getContainers() error {
 
 		for _, exited := range stoppedContainer {
 
-			fmt.Println("Stopped container: ", exited.Names)
+			fmt.Println("Container name: ", exited.Names)
 		}
 
 	} else {
 
+		fmt.Println("")
 		fmt.Println("You don't have any stopped containers.")
 	}
 
